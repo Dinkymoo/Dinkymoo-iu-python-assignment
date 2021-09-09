@@ -1,6 +1,7 @@
 from sqlalchemy import String
 from sqlalchemy import Column, Integer, Float, Date
-from db_orm_models import Base
+
+from storage.database import Base
 
 
 class Train(Base):

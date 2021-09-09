@@ -1,6 +1,7 @@
 from sqlalchemy import String
 from sqlalchemy import Column, Integer
-from db_orm_models import Base
+
+from storage.database import Base
 
 
 class Ideal(Base):
@@ -58,3 +59,5 @@ class Ideal(Base):
     y48 = Column(String)
     y49 = Column(String)
     y50 = Column(String)
+
+

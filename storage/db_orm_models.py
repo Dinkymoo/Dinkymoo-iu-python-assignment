@@ -1,28 +1,8 @@
-from sqlalchemy import String, create_engine
-from sqlalchemy import Column, Integer, Float, Date
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-from pandas import pandas as pd
-
-Base = declarative_base()
-
-
-class CSVToDB:
-    def __init__(self, model):
-        self.model = model
-        model_name = self.model.__tablename__.lower()
-        file_path = 'data/' + model_name + '.csv'
-        engine = create_engine('sqlite:///db/data.db')
-        Base.metadata.create_all(engine)
-        session = sessionmaker()
-        session.configure(bind=engine)
-        self.session = session()
-        data = pd.read_csv(file_path, header=0, delimiter=',')
-        df = pd.DataFrame(data=data)
-        self.records = df.to_records(index=0)
+from storage.csv_to_db import CSVToDB
 
 
 class TestToDB(CSVToDB):
+    """Creates a Test table in the database."""
     def __init__(self, model):
         super().__init__(model)
 
@@ -31,14 +11,15 @@ class TestToDB(CSVToDB):
                 'x': r[0],
                 'y': r[1]
             })
-            self.session.add(record)  # Add all the records
-        self.session.commit()  # Attempt to commit all the records
-        self.session.close()
+            self.session.add(record)
+        self.persist_data()
 
 
 class TrainToDB(CSVToDB):
+    """Creates a Train in the database."""
     def __init__(self, model):
         super().__init__(model)
+
         for r in self.records:
             record = model(**{
                 'x': r[0],
@@ -47,14 +28,15 @@ class TrainToDB(CSVToDB):
                 'y3': r[3],
                 'y4': r[4]
             })
-            self.session.add(record)  # Add all the records
-        self.session.commit()  # Attempt to commit all the records
-        self.session.close()
+            self.session.add(record)
+        self.persist_data()
 
 
 class IdealToDB(CSVToDB):
+    """Creates an Ideal in the database."""
     def __init__(self, model):
         super().__init__(model)
+
         for r in self.records:
             record = model(**{
                 'x': r[0],
@@ -109,6 +91,5 @@ class IdealToDB(CSVToDB):
                 'y49': r[49],
                 'y50': r[50]
             })
-            self.session.add(record)  # Add all the records
-        self.session.commit()  # Attempt to commit all the records
-        self.session.close()
+            self.session.add(record)
+        self.persist_data()
